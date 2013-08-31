@@ -10,21 +10,33 @@
 #
 # commands setup (ADJUST THESE IF NEEDED)
 #
+ACCESS_KEY_ID = 
+SECRET_ACCESS_KEY = 
 EC2_KEY_NAME = 
 KEYPATH	= ${HOME}/${EC2_KEY_NAME}.pem
 S3_BUCKET = 
-AWS	= aws
-ANT = ant
 CLUSTERSIZE	= 3
 DEPTH = 3
 TOPN = 5
 MASTER_INSTANCE_TYPE = m1.small
 SLAVE_INSTANCE_TYPE = m1.small
+#  
+AWS	= aws
+ANT = ant
+#
+ifeq ($(origin AWS_CONFIG_FILE), undefined)
+	export AWS_CONFIG_FILE:=aws.conf
+endif
+
+
 
 #
-# variables used 
+# variables used internally in makefile
 #
 seedfiles := $(wildcard urls/*)
+
+AWS_CONF = '[default]\naws_access_key_id=${ACCESS_KEY_ID}\naws_secret_access_key=${SECRET_ACCESS_KEY}\nregion=us-east-1'
+
 NUTCH-SITE-CONF= "<?xml version=\"1.0\"?> \
 <?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?> \
 <configuration> \
@@ -44,7 +56,7 @@ INSTANCES = '{  \
 	"instance_count": ${CLUSTERSIZE},  \
 	"master_instance_type": "${MASTER_INSTANCE_TYPE}",  \
 	"hadoop_version": "1.0.3",  \
-	"keep_job_flow_alive_when_no_steps": true,  \
+	"keep_job_flow_alive_when_no_steps": false,  \
 	"slave_instance_type": "${SLAVE_INSTANCE_TYPE}",  \
 	"ec_2_key_name": "${EC2_KEY_NAME}"  \
 }'
@@ -121,7 +133,6 @@ destroy:
 create:
 	@ if [ -a ./jobflowid ]; then echo "jobflowid exists! exiting"; exit 1; fi
 	@ echo creating EMR cluster
-	@ echo creating EMR cluster
 	${AWS} --output text  emr  run-job-flow --name NutchCrawler --instances ${INSTANCES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./jobflowid
 
 #
@@ -129,7 +140,7 @@ create:
 #
 
 .PHONY: bootstrap
-bootstrap: | apache-nutch-1.6-src.zip apache-nutch-1.6/build/apache-nutch-1.6.job  creates3folder seedfiles2s3 
+bootstrap: | aws.conf apache-nutch-1.6-src.zip apache-nutch-1.6/build/apache-nutch-1.6.job  creates3folder seedfiles2s3 
 	${AWS} s3 put-object --bucket ${S3_BUCKET} --key lib/apache-nutch-1.6.job.jar --body apache-nutch-1.6/build/apache-nutch-1.6.job
 
 #
@@ -165,7 +176,10 @@ apache-nutch-1.6/build/apache-nutch-1.6.job: $(wildcard apache-nutch-1.6/conf/*)
 #
 # ssh: quick wrapper to ssh into the master node of the cluster
 #
-ssh:
+ssh: aws.conf
 	h=`${AWS} emr describe-job-flows --job-flow-ids \`cat ./jobflowid\` | grep "MasterPublicDnsName" | cut -d "\"" -f 4`; echo "h=$$h"; if [ -z "$$h" ]; then echo "master not provisioned"; exit 1; fi
 	h=`${AWS} emr describe-job-flows --job-flow-ids \`cat ./jobflowid\` | grep "MasterPublicDnsName" | cut -d "\"" -f 4`; ssh -L 9100:localhost:9100 -i ${KEYPATH} "hadoop@$$h"
+
+aws.conf:
+	@echo -e ${AWS_CONF} > aws.conf
 
