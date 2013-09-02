@@ -10,8 +10,9 @@
 #
 # commands setup (ADJUST THESE IF NEEDED)
 #
-ACCESS_KEY_ID = 
-SECRET_ACCESS_KEY = 
+ACCESS_KEY_ID = AKIAJQGSLWB4YKWTPBFA
+SECRET_ACCESS_KEY = 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
+EC2_KEY_NAME = paulomagalhaes
 AWS_REGION=us-east-1
 EC2_KEY_NAME = 
 KEYPATH	= ${EC2_KEY_NAME}.pem
@@ -131,7 +132,7 @@ destroy:
 # top level target to create a new cluster of c1.mediums
 #
 .PHONY: create
-create: bootstrap
+create: 
 	@ if [ -a ./jobflowid ]; then echo "jobflowid exists! exiting"; exit 1; fi
 	@ echo creating EMR cluster
 	${AWS} --output text  emr  run-job-flow --name NutchCrawler --instances ${INSTANCES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./jobflowid
