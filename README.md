@@ -43,7 +43,7 @@ The first step to get one machine set up with the basic tools and configuration.
 
 ## Running
 
-## Copying nutch job and seed files to S3
+### Copying nutch job and seed files to S3
 
 		make bootstrap
 
