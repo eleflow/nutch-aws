@@ -6,7 +6,7 @@ This project intends to document the pitfals and tricks of running Nutch in a AW
 
 ## Getting Started
 ### Get a Amazon Linux AMI Instance running on EC2
-The first step to get one machine set up with the basic tools and configuration. I find that the simplest thing to do is to launch a t1.micro EC2 instance [Amazon Linux AMI](http://aws.amazon.com/amazon-linux-ami/) as it comes with most of the tools I need ([ami-cli](http://aws.amazon.com/cli/) among them), it is very easy to replicate and very unexpensive. (hint:The Amazon Linux AMI is the first choice in the Quick Start tab at the web based "Classic Wizard" EC2 launcher.) Make sure you have security rights to ssh to this machine.
+The first step to get one machine set up with the basic tools and configuration. I find that the simplest thing to do is to launch a t1.micro EC2 instance [Amazon Linux AMI](http://aws.amazon.com/amazon-linux-ami/) as it comes with most of the tools I need ([ami-cli](http://aws.amazon.com/cli/) among them), it is very easy to replicate and very unexpensive. I won't cover this step here as it is well documented on the web. (hint:The Amazon Linux AMI is the first choice in the Quick Start tab at the web based "Classic Wizard" EC2 launcher.) Make sure you have security rights to ssh to this machine. 
 
 ### Configuration
 1. ssh to the Amazon Linux AMI instance, create a working folder, e.g., ~/nutch-aws, we will refer to it as NUTCH\_AWS\_HOME from now on.
@@ -41,7 +41,7 @@ The first step to get one machine set up with the basic tools and configuration.
 
 		make create
 
-This will:
+This make target will do these:
 
 1. download the Nutch 1.6 source code 
 1. build the nutch 1.6 map reduce job jar.
@@ -50,7 +50,7 @@ This will:
 1. start a emr cluster and run theese mr jobs:
 	1. run the Nutch [crawl](http://wiki.apache.org/nutch/Crawl) job
 	1. run the Nutch [mergesegs](http://wiki.apache.org/nutch/bin/nutch_mergesegs) job
-	1. copy the crawldb, linkdb, and merged segments folders to s3://S3_BUCKET/crawl
+	1. copy the crawldb, linkdb, and merged segments folders from hdfs://users/hadoop/crawl to s3://S3_BUCKET/crawl
 1. copy the logs to s3://S3_BUCKET/logs
 
 Note: the cluster is launched with "keep_job_flow_alive_when_no_steps" set to false which means it will be destroyed after the steps are completed. 

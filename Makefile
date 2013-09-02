@@ -130,7 +130,7 @@ destroy:
 # top level target to create a new cluster of c1.mediums
 #
 .PHONY: create
-create:
+create: aws.conf
 	@ if [ -a ./jobflowid ]; then echo "jobflowid exists! exiting"; exit 1; fi
 	@ echo creating EMR cluster
 	${AWS} --output text  emr  run-job-flow --name NutchCrawler --instances ${INSTANCES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./jobflowid
