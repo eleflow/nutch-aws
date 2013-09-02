@@ -33,9 +33,19 @@ The first step to get one machine set up with the basic tools and configuration.
 		MASTER_INSTANCE_TYPE = m1.small 
 		SLAVE_INSTANCE_TYPE = m1.small
 
+1. Checking the configuration:
+
+		make s3.list
+
+This should list the S3 buckets associated with your account if the configuration is correct
+
 1. Create a NUTCH\_AWS\_HOME\urls\seed.txt file with the urls that will be a starting point to the crawler.
 
 ## Running
+
+## Copying nutch job and seed files to S3
+
+		make bootstrap
 
 ### Launching a cluster
 

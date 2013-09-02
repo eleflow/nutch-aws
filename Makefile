@@ -130,7 +130,7 @@ destroy:
 # top level target to create a new cluster of c1.mediums
 #
 .PHONY: create
-create: aws.conf
+create: bootstrap
 	@ if [ -a ./jobflowid ]; then echo "jobflowid exists! exiting"; exit 1; fi
 	@ echo creating EMR cluster
 	${AWS} --output text  emr  run-job-flow --name NutchCrawler --instances ${INSTANCES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./jobflowid
@@ -180,6 +180,15 @@ ssh: aws.conf
 	h=`${AWS} emr describe-job-flows --job-flow-ids \`cat ./jobflowid\` | grep "MasterPublicDnsName" | cut -d "\"" -f 4`; echo "h=$$h"; if [ -z "$$h" ]; then echo "master not provisioned"; exit 1; fi
 	h=`${AWS} emr describe-job-flows --job-flow-ids \`cat ./jobflowid\` | grep "MasterPublicDnsName" | cut -d "\"" -f 4`; ssh -L 9100:localhost:9100 -i ${KEYPATH} "hadoop@$$h"
 
+#
+# created the config file for aws-cli
+#
 aws.conf:
 	@echo -e ${AWS_CONF} > aws.conf
+
+s3.list: aws.conf
+	aws --output text s3 list-buckets
+
+
+
 
