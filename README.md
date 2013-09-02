@@ -37,7 +37,7 @@ The first step to get one machine set up with the basic tools and configuration.
 
 		make s3.list
 
-This should list the S3 buckets associated with your account if the configuration is correct
+	This should list the S3 buckets associated with your account if the configuration is correct
 
 1. Create a NUTCH\_AWS\_HOME\urls\seed.txt file with the urls that will be a starting point to the crawler.
 
