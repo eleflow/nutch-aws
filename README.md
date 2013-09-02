@@ -43,13 +43,9 @@ The first step to get one machine set up with the basic tools and configuration.
 
 ## Running
 
-### Copying nutch job and seed files to S3
+### Copying nutch job jar and seed files to S3
 
 		make bootstrap
-
-### Launching a cluster
-
-		make create
 
 This make target will do these:
 
@@ -57,6 +53,12 @@ This make target will do these:
 1. build the nutch 1.6 map reduce job jar.
 1. copy the nutch 1.6 map reduce job jar to s3://S3_BUCKET/lib
 1. copy the contents from the NUTCH\_AWS\_HOME\urls folder to s3://S3_BUCKET/url
+
+### Launching a cluster
+
+		make create
+		
+This make target will do these:
 1. start a emr cluster and run theese mr jobs:
 	1. run the Nutch [crawl](http://wiki.apache.org/nutch/Crawl) job
 	1. run the Nutch [mergesegs](http://wiki.apache.org/nutch/bin/nutch_mergesegs) job
