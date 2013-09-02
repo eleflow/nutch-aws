@@ -24,6 +24,7 @@ The first step to get one machine set up with the basic tools and configuration.
 
 		ACCESS_KEY_ID = 					## YOUR ACCESS KEY ID
 		SECRET_ACCESS_KEY = 				## YOUR ACCESS KEY SECRET
+		AWS_REGION = us-east-1				## CHANGE IT IF YOU WANT 
 		EC2_KEY_NAME = 						## YOUR ACCESS KEY NAME
 		KEYPATH	= ${HOME}/${EC2_KEY_NAME}.pem ## YOUR ACCESS KEY  FILE (IF IT"S DIFFERENT THAN ${HOME}/${EC2_KEY_NAME}.pem)
 		S3_BUCKET = 						## THE S3 BUCKET WHERE FILES WILL BE READ FROM AND WRITTEN TO
@@ -57,7 +58,7 @@ This make target will do these:
 ### Launching a cluster
 
 		make create
-		
+
 This make target will do these:
 1. start a emr cluster and run theese mr jobs:
 	1. run the Nutch [crawl](http://wiki.apache.org/nutch/Crawl) job
@@ -65,13 +66,15 @@ This make target will do these:
 	1. copy the crawldb, linkdb, and merged segments folders from hdfs://users/hadoop/crawl to s3://S3_BUCKET/crawl
 1. copy the logs to s3://S3_BUCKET/logs
 
+The content of ./jobflowid file shoulfd be a jobflow id (e.g. j-IR4OQTH2HE7Z )if everything went well. 
+
 Note: the cluster is launched with "keep_job_flow_alive_when_no_steps" set to false which means it will be destroyed after the steps are completed. 
 
 ## Checking the master node
 
 		make ssh
 
-This will ssh into the master node and will give access to the [hadoop command line tool](http://hadoop.apache.org/docs/r1.0.4/commands_manual.html).
+This will ssh into the master node and will give access to the [hadoop command line tool](http://hadoop.apache.org/docs/r1.0.4/commands_manual.html) and the logs at /mnt/var/log/hadoop.
 
 ## Destroying 
 

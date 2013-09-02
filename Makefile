@@ -12,8 +12,9 @@
 #
 ACCESS_KEY_ID = 
 SECRET_ACCESS_KEY = 
+AWS_REGION=us-east-1
 EC2_KEY_NAME = 
-KEYPATH	= ${HOME}/${EC2_KEY_NAME}.pem
+KEYPATH	= ${EC2_KEY_NAME}.pem
 S3_BUCKET = 
 CLUSTERSIZE	= 3
 DEPTH = 3
@@ -35,7 +36,7 @@ endif
 #
 seedfiles := $(wildcard urls/*)
 
-AWS_CONF = '[default]\naws_access_key_id=${ACCESS_KEY_ID}\naws_secret_access_key=${SECRET_ACCESS_KEY}\nregion=us-east-1'
+AWS_CONF = '[default]\naws_access_key_id=${ACCESS_KEY_ID}\naws_secret_access_key=${SECRET_ACCESS_KEY}\nregion=${AWS_REGION}'
 
 NUTCH-SITE-CONF= "<?xml version=\"1.0\"?> \
 <?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?> \
@@ -140,14 +141,14 @@ create: bootstrap
 #
 
 .PHONY: bootstrap
-bootstrap: | aws.conf apache-nutch-1.6-src.zip apache-nutch-1.6/build/apache-nutch-1.6.job  creates3folder seedfiles2s3 
+bootstrap: | aws.conf apache-nutch-1.6-src.zip apache-nutch-1.6/build/apache-nutch-1.6.job  creates3bucket seedfiles2s3 
 	${AWS} s3 put-object --bucket ${S3_BUCKET} --key lib/apache-nutch-1.6.job.jar --body apache-nutch-1.6/build/apache-nutch-1.6.job
 
 #
 #  create se bucket
 #
-.PHONY: creates3folder
-creates3folder:
+.PHONY: creates3bucket
+creates3bucket:
 	${AWS} s3 create-bucket --bucket ${S3_BUCKET}
 
 #
