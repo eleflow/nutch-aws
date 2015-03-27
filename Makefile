@@ -189,7 +189,7 @@ aws.conf:
 	@echo -e ${AWS_CONF} > aws.conf
 
 s3.list: aws.conf
-	aws --output text s3 list-buckets
+	aws --output text s3 ls
 
 
 
